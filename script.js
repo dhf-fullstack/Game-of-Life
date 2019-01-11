@@ -1,4 +1,5 @@
 const SIDE = 20
+var shouldRun = false;
 
 /* screen N x N
    now and next are N+1 x N+1 arrays with extra "dead" rows at top and bottom, columns an left and right
@@ -7,8 +8,8 @@ const SIDE = 20
    screen(row, col) is now[ (SIDE+2)*(row+1) + col) + 1 ]
 */
 
-const now = new Array((SIDE+2)*(SIDE+2));
-const next = new Array((SIDE+2)*(SIDE+2));
+var now = new Array((SIDE+2)*(SIDE+2));
+var next = new Array((SIDE+2)*(SIDE+2));
 
 /* (row,col) to index */
 function rc_to_i(r, c) {
@@ -31,8 +32,14 @@ for(let row = 0; row < SIDE; row++) {
   field.appendChild(r);
 }
 
+const btnOnce = document.querySelector('#once')
+btnOnce.addEventListener("click", once)
+
 const btnRun = document.querySelector('#run')
 btnRun.addEventListener("click", run)
+
+const btnEnuff = document.querySelector('#enuff')
+btnEnuff.addEventListener("click", enuff)
 
 const btnRandomize = document.querySelector('#random')
 btnRandomize.addEventListener("click", randomize)
@@ -63,12 +70,24 @@ function copyToScreen(whence) {
 }
 
 function run() {
+  shouldRun = true;
+  while (shouldRun) {
+    once();
+  }
+}
+
+function once() {
   copyScreenTo(now);
   beFruitfulAndMultiply(now, next);
   copyToScreen(next);
   let t = now;
   now = next;
   next = now;
+}
+
+function enuff() {
+  console.log("enuff!");
+  shouldRun = false;
 }
 
 function randomize() {
