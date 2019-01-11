@@ -69,16 +69,21 @@ function copyToScreen(whence) {
   }
 }
 
-function run() {
-  shouldRun = true;
-  copyScreenTo(now);
-  while (shouldRun) {
+function run1() {
+  if (shouldRun) {
     beFruitfulAndMultiply(now, next);
     copyToScreen(next);
     let t = now;
     now = next;
     next = t;
+    setTimeout(run1, 1000);
   }
+}
+
+function run() {
+  shouldRun = true;
+  copyScreenTo(now);
+  run1();
 }
 
 function once() {
