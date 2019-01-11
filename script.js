@@ -77,7 +77,7 @@ function run() {
     copyToScreen(next);
     let t = now;
     now = next;
-    next = now;
+    next = t;
   }
 }
 
