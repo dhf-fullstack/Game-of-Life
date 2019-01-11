@@ -1,23 +1,28 @@
-const SIDE = 20
-var shouldRun = false;
-
-/* screen N x N
-   now and next are N+1 x N+1 arrays with extra "dead" rows at top and bottom, columns an left and right
-   eliminate edge cases when counting neighbors
-   this makes now and next 1 based arrays!
-   screen(row, col) is now[ (SIDE+2)*(row+1) + col) + 1 ]
+/* screen N x N ("SIDE")
+   'now' and 'next' are N+1 x N+1 arrays with extra "dead" rows
+    at top and bottom, columns an left and right; to
+    eliminate edge cases when counting neighbors.
+    'now' and 'next' are 1 based arrays:
+    screen(row, col) => now[ (SIDE+2)*(row+1) + col) + 1 ]
 */
 
-var now = new Array((SIDE+2)*(SIDE+2));
-var next = new Array((SIDE+2)*(SIDE+2));
-
-/* (row,col) to index */
-function rc_to_i(r, c) {
-  return ((SIDE+2)*(r+1) + c) + 1;
-}
+const SIDE = 20
+var now = new Array((SIDE+2)*(SIDE+2))
+var next = new Array((SIDE+2)*(SIDE+2))
 
 now.fill(0);
 next.fill(0);
+
+/* start and stop continuous evolution */
+
+var shouldRun = false
+
+/* map (row,col) to index */
+function rc_to_i(r, c) {
+  return ((SIDE+2)*(r+1) + c) + 1
+}
+
+/* set up the DOM - the field is a table */
 
 let field = document.querySelector('#field')
 for(let row = 0; row < SIDE; row++) {
@@ -44,12 +49,16 @@ btnEnuff.addEventListener("click", enuff)
 const btnRandomize = document.querySelector('#random')
 btnRandomize.addEventListener("click", randomize)
 
+/* The player can initialize the field by clicking cells to toggle between life & death */
+
 function cellClick(event) {
   console.log("CLICK");
   event.target.classList.toggle("live");
 }
 
 [...document.querySelectorAll(".cell")].forEach(e => e.addEventListener("click", cellClick));
+
+/* Copy between screen & arrays */
 
 function copyScreenTo(where) {
   let cells = [...document.querySelectorAll(".cell")];
@@ -69,6 +78,20 @@ function copyToScreen(whence) {
   }
 }
 
+/* Evolve! */
+
+function once() {
+  copyScreenTo(now);
+  beFruitfulAndMultiply(now, next);
+  copyToScreen(next);
+}
+
+function run() {
+  shouldRun = true;
+  copyScreenTo(now);
+  run1();
+}
+
 function run1() {
   if (shouldRun) {
     beFruitfulAndMultiply(now, next);
@@ -78,18 +101,6 @@ function run1() {
     next = t;
     setTimeout(run1, 1000);
   }
-}
-
-function run() {
-  shouldRun = true;
-  copyScreenTo(now);
-  run1();
-}
-
-function once() {
-  copyScreenTo(now);
-  beFruitfulAndMultiply(now, next);
-  copyToScreen(next);
 }
 
 function enuff() {
@@ -120,25 +131,3 @@ function beFruitfulAndMultiply(now, next) {
     }
   }
 }
-
-/*
-document.querySelector('table')
-
-let makeRow = () => {
-    let newRow = document.createElement('tr')
-    for(let i = 0; i < 20; i++){
-      let cells = document.createElement('td')
-      newRow.appendChild(cells)
-    }
-    newTable.appendChild(newRow)
-}
-
-const button = document.querySelector('#add-row')
-button.addEventListener("click", makeRow)
-
-function tableClick(event) {
-  event.target.classList.add("yellow");
-}
-
-newTable.addEventListener("click", tableClick);
-*/
