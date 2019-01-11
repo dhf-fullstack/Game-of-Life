@@ -71,8 +71,13 @@ function copyToScreen(whence) {
 
 function run() {
   shouldRun = true;
+  copyScreenTo(now);
   while (shouldRun) {
-    once();
+    beFruitfulAndMultiply(now, next);
+    copyToScreen(next);
+    let t = now;
+    now = next;
+    next = now;
   }
 }
 
@@ -80,9 +85,6 @@ function once() {
   copyScreenTo(now);
   beFruitfulAndMultiply(now, next);
   copyToScreen(next);
-  let t = now;
-  now = next;
-  next = now;
 }
 
 function enuff() {
